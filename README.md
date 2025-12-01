@@ -1,46 +1,127 @@
-# Getting Started with Create React App
+# 🗓️ Month View Task Planner
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A **Google Calendar–like Month View Task Planner** built using **React + TypeScript**.  
+This application allows users to visually create, schedule, move, resize, categorize, and filter tasks directly on a monthly calendar grid using drag & drop interactions.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## ✨ Features
 
-### `npm start`
+### ✅ Core Functionalities
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- **Create Tasks via Drag Selection**
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+  - Drag across multiple calendar days to create a task.
+  - A modal opens on release to enter task name and category.
 
-### `npm test`
+- **Reschedule Tasks**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  - Drag the **middle of a task bar** to move it to a new date.
+  - Task duration is automatically preserved.
 
-### `npm run build`
+- **Resize Tasks (Stretch Edges)**
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  - Drag the **left edge** to update the **start date**.
+  - Drag the **right edge** to update the **end date**.
+  - Task range updates dynamically.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **Task Categories**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  - To Do
+  - In Progress
+  - Review
+  - Completed
 
-### `npm run eject`
+- **Edit Tasks**
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+  - Click on a task to edit its name and category.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- **Filtering & Search**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+  - Multi-select category filters.
+  - Time-based filters: 1 week, 2 weeks, 3 weeks.
+  - Live text search by task name.
+  - All filters work cumulatively.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- **Month View Calendar UI**
 
-## Learn More
+  - Fixed monthly grid layout.
+  - Continuous multi-day task bars (no per-day visual gaps).
+  - Highlighted current date.
+  - Clean and minimal UI.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **State Management**
+  - Centralized using **React Context API**.
+  - In-memory storage (no backend required).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
+
+## 🛠 Tech Stack
+
+- **React**
+- **TypeScript**
+- **date-fns** – Date manipulation
+- **React Context API** – Global state management
+- **Native HTML5 Drag & Drop API**
+- **CSS-in-JS (inline styles)**
+
+---
+
+## 📂 Project Structure
+
+src/
+│
+├── components/
+│ ├── calendar/
+│ │ ├── MonthView.tsx
+│ │ ├── DayCell.tsx
+│ │ ├── TaskBar.tsx
+│ │ └── CalendarHeader.tsx
+│ │
+│ └── modal/
+│ └── CreateTaskModal.tsx
+│
+├── context/
+│ └── TaskContext.tsx
+│
+├── hooks/
+│ └── useTaskFilters.ts
+│
+├── utils/
+│ └── dateUtils.ts
+│
+├── types/
+│ └── Task.ts
+│
+└── App.tsx
+
+---
+
+## 🚀 Getting Started
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone <your-repo-url>
+cd <project-folder>
+
+2️⃣ Install Dependencies
+npm install
+3️⃣ Start the Development Server
+npm start
+The app will be available at:
+http://localhost:3000
+
+🧠 How the Application Works
+	•	The monthly grid is generated using a month matrix (array of weeks).
+	•	Tasks are stored and managed globally using React Context.
+	•	Multi-day tasks are rendered using a weekly overlay grid, allowing:
+	•	Continuous task bars across days.
+	•	Accurate move & resize behavior.
+	•	Drag payloads distinguish between:
+	•	Move operations
+	•	Resize operations
+	•	Dragging task edges modifies only the start or end date.
+	•	Dragging the task body shifts the entire task range.
+	•	Filters are applied in real time using a custom filtering hook.
+```
