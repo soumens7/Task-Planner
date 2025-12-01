@@ -27,13 +27,12 @@ const TaskBar: React.FC<TaskBarProps> = ({
 }) => {
   const bg = categoryColors[task.category] || "#6c757d";
 
-  // Just for your own verification: show dates in tooltip
+  
   const title = `${task.name} (${task.category})
 ${task.startDate} → ${task.endDate}`;
 
   return (
     <div
-      // NOT draggable at the container level
       onMouseDown={(e) => e.stopPropagation()} // prevent day selection on interactions
       style={{
         marginTop: 4,
@@ -55,7 +54,7 @@ ${task.startDate} → ${task.endDate}`;
         onMouseDown={(e) => e.stopPropagation()}
         onDragStart={(e) => {
           e.stopPropagation();
-          onDragStartResize(task.id, "start", e); // RESIZE, NOT MOVE
+          onDragStartResize(task.id, "start", e); 
         }}
         style={{
           width: 6,
@@ -67,7 +66,7 @@ ${task.startDate} → ${task.endDate}`;
 
       {/* MIDDLE = MOVE + EDIT */}
       <div
-        draggable // ONLY this area triggers MOVE
+        draggable 
         onMouseDown={(e) => e.stopPropagation()}
         onDragStart={(e) => {
           

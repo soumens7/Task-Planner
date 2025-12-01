@@ -1,4 +1,3 @@
-// components/calendar/DayCell.tsx
 import React from "react";
 import { format } from "date-fns";
 import { Task } from "../../types/Task";
@@ -51,8 +50,6 @@ const DayCell: React.FC<DayCellProps> = ({
       >
         {dayNumber}
       </div>
-
-      {/* no TaskBars inside cells anymore – tasks are drawn in MonthView overlay */}
       <div style={{ marginTop: 2 }} />
     </div>
   );

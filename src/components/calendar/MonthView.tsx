@@ -16,7 +16,7 @@ import {
   differenceInCalendarDays, 
 } from "date-fns";
 import CreateTaskModal from "../modal/CreateTaskModal";
-import TaskBar from "./TaskBar"; // tasks now drawn here
+import TaskBar from "./TaskBar";
 
 const weekdayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 

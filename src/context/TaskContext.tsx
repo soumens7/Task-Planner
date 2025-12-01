@@ -1,4 +1,3 @@
-// context/TaskContext.tsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { addDays, differenceInCalendarDays } from "date-fns";
 import { Task, TaskFilters } from "../types/Task";
@@ -15,7 +14,6 @@ interface TaskContextValue {
 
   addTask: (data: Omit<Task, "id">) => void;
 
-  // ✅ NEW
   updateTask: (id: string, partial: Partial<Task>) => void;
   moveTask: (id: string, newStart: string) => void;
   resizeTask: (id: string, side: "start" | "end", newDate: string) => void;
@@ -47,7 +45,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
   const [filters, setFilters] = useState<TaskFilters>(initialFilters);
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
 
-  // ✅ NEW: editing state
+  // editing state
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   // Demo seed tasks
@@ -100,14 +98,14 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
     ]);
   };
 
-  // ✅ updateTask: shallow merge by id
+  // updateTask: shallow merge by id
   const updateTask = (id: string, partial: Partial<Task>) => {
     setTasks((prev) =>
       prev.map((t) => (t.id === id ? { ...t, ...partial } : t))
     );
   };
 
-  // ✅ moveTask: shift start/end by same offset (keep duration)
+  // moveTask: shift start/end by same offset (keep duration)
   const moveTask = (id: string, newStart: string) => {
     setTasks((prev) =>
       prev.map((t) => {
@@ -129,7 +127,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };
 
-  // ✅ resizeTask: adjust just start or end, with sanity check
+  // resizeTask: adjust just start or end
   const resizeTask = (id: string, side: "start" | "end", newDate: string) => {
     setTasks((prev) =>
       prev.map((t) => {

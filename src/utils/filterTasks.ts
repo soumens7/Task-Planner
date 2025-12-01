@@ -18,7 +18,7 @@ export const filterTasks = (tasks: Task[], filters: TaskFilters): Task[] => {
       }
     }
 
-    // Time-based filter (if set)
+    // Time-based filter
     if (timeRangeWeeks) {
       const now = new Date();
       const end = parseISO(task.endDate);
