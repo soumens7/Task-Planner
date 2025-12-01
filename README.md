@@ -11,8 +11,6 @@ This application allows users to visually create, schedule, move, resize, catego
 
 ---
 
-## ![alt text](<Screenshot 2025-12-01 at 10.26.59 PM.png>)
-
 ## ✨ Features
 
 ### ✅ Core Functionalities
