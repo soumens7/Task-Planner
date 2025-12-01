@@ -5,6 +5,10 @@ This application allows users to visually create, schedule, move, resize, catego
 
 ---
 
+## 🚀 Live Demo
+
+> Check out the live version of the project [here](https://task-planner-jade-three.vercel.app/)
+
 ## ✨ Features
 
 ### ✅ Core Functionalities
