@@ -66,22 +66,22 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
         id: "2",
         name: "Marketing plan",
         category: "todo",
-        startDate: new Date(year, month, 10).toISOString(),
-        endDate: new Date(year, month, 12).toISOString(),
+        startDate: new Date(year, month, 8).toISOString(),
+        endDate: new Date(year, month, 10).toISOString(),
       },
       {
         id: "3",
         name: "Security features",
         category: "completed",
-        startDate: new Date(year, month, 14).toISOString(),
-        endDate: new Date(year, month, 16).toISOString(),
+        startDate: new Date(year, month, 13).toISOString(),
+        endDate: new Date(year, month, 14).toISOString(),
       },
       {
         id: "4",
         name: "New features",
         category: "review",
         startDate: new Date(year, month, 20).toISOString(),
-        endDate: new Date(year, month, 21).toISOString(),
+        endDate: new Date(year, month, 20).toISOString(),
       },
     ];
 
