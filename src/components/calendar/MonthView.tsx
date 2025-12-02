@@ -13,7 +13,7 @@ import { Task } from "../../types/Task";
 import {
   parseISO,
   isWithinInterval,
-  differenceInCalendarDays, 
+  differenceInCalendarDays,
 } from "date-fns";
 import CreateTaskModal from "../modal/CreateTaskModal";
 import TaskBar from "./TaskBar";
@@ -60,7 +60,7 @@ const MonthView: React.FC = () => {
     setEditingTask,
   } = useTaskContext();
 
-  const matrix = getMonthMatrix(selectedMonth); // matrix: Date[][] (weeks × 7)
+  const matrix = getMonthMatrix(selectedMonth); // weeks × 7
   const today = new Date();
   const visibleTasks = useTaskFilters(tasks, filters);
 
@@ -153,7 +153,10 @@ const MonthView: React.FC = () => {
     resizeTask(payload.taskId, payload.side, iso);
   };
 
-  const handleDayDrop = (targetDate: Date, e: React.DragEvent<HTMLDivElement>) => {
+  const handleDayDrop = (
+    targetDate: Date,
+    e: React.DragEvent<HTMLDivElement>
+  ) => {
     e.preventDefault();
     const raw = e.dataTransfer.getData("application/x-task");
     const payload = parsePayload(raw);
@@ -177,35 +180,71 @@ const MonthView: React.FC = () => {
     setShowModal(true);
   };
 
-  // helper to compute continuous segments per week
-  type WeekSegment = { task: Task; colStart: number; colEnd: number };
+  // --- helper to compute continuous segments per week with lanes ---
+  type WeekSegment = {
+    task: Task;
+    colStart: number;
+    colEnd: number;
+    lane: number;
+  };
 
   const getWeekSegments = (week: Date[]): WeekSegment[] => {
     const weekStart = week[0];
     const weekEnd = week[6];
-    const segments: WeekSegment[] = [];
+
+    const rawSegments: Omit<WeekSegment, "lane">[] = [];
 
     visibleTasks.forEach((task) => {
       const tStart = parseISO(task.startDate);
       const tEnd = parseISO(task.endDate);
 
-     
+      // no overlap with this week
       if (tEnd < weekStart || tStart > weekEnd) return;
 
+      // clamp to the week bounds
       const segStart = tStart < weekStart ? weekStart : tStart;
       const segEnd = tEnd > weekEnd ? weekEnd : tEnd;
 
       const colStart =
-        differenceInCalendarDays(segStart, weekStart) + 1; // 1-based
-      const colEnd = differenceInCalendarDays(segEnd, weekStart) + 2; // exclusive
+        differenceInCalendarDays(segStart, weekStart) + 1; // gridColumnStart (1-based)
+      const colEnd = differenceInCalendarDays(segEnd, weekStart) + 2; // gridColumnEnd (exclusive)
 
-      segments.push({ task, colStart, colEnd });
+      rawSegments.push({ task, colStart, colEnd });
     });
 
-    return segments;
+    
+    const lanes: { colStart: number; colEnd: number }[][] = [];
+    const withLanes: WeekSegment[] = [];
+
+    rawSegments.forEach((seg) => {
+      let laneIndex = 0;
+
+      
+      while (laneIndex < lanes.length) {
+        const lane = lanes[laneIndex];
+        const overlaps = lane.some(
+          (existing) =>
+            !(
+              seg.colEnd <= existing.colStart || // seg ends before existing starts
+              seg.colStart >= existing.colEnd // seg starts after existing ends
+            )
+        );
+        if (!overlaps) break;
+        laneIndex++;
+      }
+
+      if (!lanes[laneIndex]) {
+        lanes[laneIndex] = [];
+      }
+      lanes[laneIndex].push({ colStart: seg.colStart, colEnd: seg.colEnd });
+
+      withLanes.push({ ...seg, lane: laneIndex });
+    });
+
+    return withLanes;
   };
 
-  const todayRef = today; 
+  const todayRef = today;
 
   return (
     <>
@@ -232,7 +271,7 @@ const MonthView: React.FC = () => {
       {/* month as stacked week-rows, each with a base grid + overlay */}
       <div style={{ border: "1px solid #e2e2e6" }}>
         {matrix.map((week, rowIndex) => {
-          const segments = getWeekSegments(week); 
+          const segments = getWeekSegments(week);
 
           return (
             <div key={rowIndex} style={{ position: "relative" }}>
@@ -262,7 +301,6 @@ const MonthView: React.FC = () => {
                         date={date}
                         isCurrentMonth={isSameMonth(date, selectedMonth)}
                         isToday={isSameDay(date, todayRef)}
-                       
                         isSelected={!!isSelected}
                         onMouseDown={() => handleDayMouseDown(date)}
                         onMouseEnter={() => handleDayMouseEnter(date)}
@@ -272,7 +310,7 @@ const MonthView: React.FC = () => {
                 })}
               </div>
 
-              {/* Coverlay grid that draws continuous TaskBars spanning columns */}
+              {/* overlay grid that draws continuous TaskBars spanning columns in multiple lanes */}
               <div
                 style={{
                   pointerEvents: "none", // let clicks go through, except on bars
@@ -280,15 +318,20 @@ const MonthView: React.FC = () => {
                   inset: 0,
                   display: "grid",
                   gridTemplateColumns: "repeat(7, 1fr)",
-                  gridAutoRows: "minmax(80px, auto)",
+                  gridTemplateRows: `repeat(${
+                    segments.length
+                      ? Math.max(...segments.map((s) => s.lane)) + 1
+                      : 1
+                  }, minmax(24px, auto))`,
                 }}
               >
-                {segments.map(({ task, colStart, colEnd }) => (
+                {segments.map(({ task, colStart, colEnd, lane }) => (
                   <div
-                    key={task.id}
+                    key={`${task.id}-${lane}`}
                     style={{
                       gridColumnStart: colStart,
                       gridColumnEnd: colEnd,
+                      gridRowStart: lane + 1,
                       display: "flex",
                       alignItems: "center",
                       padding: "0 4px",
