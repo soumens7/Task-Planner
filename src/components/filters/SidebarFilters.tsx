@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react"; 
 import { useTaskContext } from "../../context/TaskContext";
 import { TaskCategory } from "../../types/Task";
 
@@ -19,6 +19,21 @@ const timeOptions: { label: string; value: 1 | 2 | 3 | null }[] = [
 const SidebarFilters: React.FC = () => {
   const { filters, setFilters } = useTaskContext();
 
+  // local state for typing
+  const [searchInput, setSearchInput] = useState(filters.search);
+
+  // debounce logic (300ms)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFilters((prev) => ({
+        ...prev,
+        search: searchInput,
+      }));
+    }, 300);
+
+    return () => clearTimeout(timer); // cleanup on each change
+  }, [searchInput, setFilters]); 
+
   const toggleCategory = (cat: TaskCategory) => {
     setFilters((prev) => {
       const exists = prev.categories.includes(cat);
@@ -38,19 +53,16 @@ const SidebarFilters: React.FC = () => {
     }));
   };
 
+  // only updates local state
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFilters((prev) => ({
-      ...prev,
-      search: value,
-    }));
+    setSearchInput(e.target.value);
   };
 
   return (
     <div>
       <h2 style={{ fontSize: 18, marginBottom: 16 }}>Filters</h2>
 
-      {/* Search */}
+      {/* SEARCH WITH DEBOUNCE */}
       <div style={{ marginBottom: 16 }}>
         <label
           style={{ display: "block", fontSize: 12, marginBottom: 4 }}
@@ -62,8 +74,8 @@ const SidebarFilters: React.FC = () => {
           id="search"
           type="text"
           placeholder="Search..."
-          value={filters.search}
-          onChange={handleSearchChange}
+          value={searchInput}          
+          onChange={handleSearchChange} 
           style={{
             width: "100%",
             padding: "6px 8px",
